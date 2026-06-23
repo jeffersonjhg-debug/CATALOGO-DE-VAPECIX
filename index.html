@@ -94,12 +94,12 @@ main{padding-top:var(--hh);padding-bottom:var(--bnh)}
 
 /* CARD */
 .pc{background:var(--card);border:1.5px solid var(--bdr);border-radius:var(--r);overflow:hidden;transition:var(--t);cursor:pointer;position:relative;animation:fadeUp .4s ease both;box-shadow:var(--sh2)}
-.pc:hover{transform:translateY(-4px);border-color:var(--blue);box-shadow:0 12px 32px rgba(59,111,255,.15)}
+.pc:hover{transform:translateY(-4px);border-color:var(--blue);box-shadow:0 12px 36px rgba(59,111,255,.2)}
 .pc-img{height:140px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
 @media(min-width:768px){.pc-img{height:155px}}
-.pc-img img{width:100%;height:100%;object-fit:contain;padding:10px;transition:transform .3s}
+.pc-img img{width:100%;height:100%;object-fit:contain;padding:12px;transition:transform .3s;filter:drop-shadow(0 2px 10px rgba(0,0,0,.12))}
 .pc:hover .pc-img img{transform:scale(1.07)}
-.pc-emoji{font-size:42px}
+.pc-emoji{font-size:42px;filter:drop-shadow(0 3px 8px rgba(0,0,0,.15))}
 .pc-model{position:absolute;top:7px;left:7px;z-index:2;background:rgba(255,255,255,.88);backdrop-filter:blur(4px);font-size:9px;font-weight:700;letter-spacing:.8px;color:var(--txt);padding:3px 7px;border-radius:20px;text-transform:uppercase;border:1px solid rgba(0,0,0,.08)}
 .pc-tag{position:absolute;top:7px;right:7px;z-index:2;font-size:9px;font-weight:700;letter-spacing:.4px;padding:3px 7px;border-radius:20px;text-transform:uppercase}
 .tn{background:#DCFCE7;color:#15803D;border:1px solid #BBF7D0}
@@ -541,8 +541,43 @@ textarea.ef-input{resize:vertical;min-height:80px}
           </div>
           <div class="cfg-group"><label class="cfg-lbl">🔑 Nuevo PIN (4 dígitos — dejar vacío para mantener actual)</label><input class="cfg-input" id="cpin" type="password" maxlength="4" placeholder="••••" inputmode="numeric"></div>
         </div>
+
+        <div class="cfg-sec" style="border-color:#BFDBFE;background:linear-gradient(135deg,#EFF6FF,#fff)">
+          <div class="cfg-sec-title" style="color:#1D4ED8">☁️ Sincronización en la Nube</div>
+          <div style="font-size:12px;color:#3B82F6;margin-bottom:14px;line-height:1.5;background:#DBEAFE;padding:10px;border-radius:8px">
+            <strong>Cómo funciona:</strong> Los cambios del admin se publican en la nube y <strong>todos los clientes ven los cambios al instante</strong> sin necesidad de re-subir nada a Vercel.<br><br>
+            <strong>Paso 1:</strong> Ve a <a href="https://jsonbin.io" target="_blank" style="color:#1D4ED8;font-weight:700">jsonbin.io</a> → Sign Up gratis<br>
+            <strong>Paso 2:</strong> Crea un Bin nuevo con contenido <code style="background:#fff;padding:2px 4px;border-radius:3px">{}</code> y ponlo como <strong>Public</strong><br>
+            <strong>Paso 3:</strong> Copia el <strong>Bin ID</strong> y tu <strong>Master Key</strong> (Account → API Keys)<br>
+            <strong>Paso 4:</strong> Pégalos aquí abajo y guarda
+          </div>
+          <div class="cfg-group">
+            <label class="cfg-lbl">🪣 JSONBin — Bin ID</label>
+            <input class="cfg-input" id="cbin" type="text" placeholder="64abc123e3a3825f4b4e1234">
+            <div class="cfg-hint">El ID del bin que creaste en jsonbin.io</div>
+          </div>
+          <div class="cfg-group">
+            <label class="cfg-lbl">🔑 JSONBin — Master Key (solo tú la ves)</label>
+            <input class="cfg-input" id="cmkey" type="password" placeholder="$2a$10$...">
+            <div class="cfg-hint">Se guarda solo en tu dispositivo, nunca en el HTML público</div>
+          </div>
+          <div style="display:flex;gap:8px;margin-top:4px">
+            <button onclick="testCloud()" style="flex:1;background:var(--bg3);border:1.5px solid var(--bdr);color:var(--blue);font-size:13px;font-weight:700;padding:10px;border-radius:var(--rsm);cursor:pointer">🔍 Probar Conexión</button>
+            <button onclick="pushToCloud()" style="flex:1;background:linear-gradient(135deg,#1D4ED8,#7C3AED);color:#fff;font-size:13px;font-weight:700;padding:10px;border-radius:var(--rsm);border:none;cursor:pointer">☁️ Publicar Ahora</button>
+          </div>
+          <div class="save-ok" id="cloud-ok" style="margin-top:8px">✅ ¡Publicado! Todos los clientes verán los cambios</div>
+          <div class="save-ok" id="cloud-err" style="background:#FEE2E2;border-color:#FCA5A5;color:#DC2626;margin-top:8px">❌ Error de conexión. Verifica el Bin ID y Master Key</div>
+        </div>
         <button class="save-btn" onclick="saveCfg()">💾 Guardar Configuración</button>
         <div class="save-ok" id="cfg-ok">✅ ¡Configuración guardada!</div>
+        <div style="margin-top:20px;padding:16px;background:#EFF6FF;border:1.5px solid #BFDBFE;border-radius:12px">
+          <div style="font-size:13px;font-weight:700;color:#1D4ED8;margin-bottom:6px">🚀 Publicar cambios para todos</div>
+          <div style="font-size:12px;color:#3B6FFF;line-height:1.5;margin-bottom:12px">Los cambios del admin se guardan en <strong>este dispositivo</strong>. Para que todos los clientes vean las actualizaciones: descarga el HTML y súbelo a Netlify.</div>
+          <button onclick="exportarHTML()" style="width:100%;background:linear-gradient(135deg,#1D4ED8,#7C3AED);color:#fff;font-size:14px;font-weight:700;padding:12px;border-radius:10px;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:opacity .2s">
+            📥 Exportar HTML Actualizado
+          </button>
+          <div style="font-size:11px;color:#60A5FA;text-align:center;margin-top:8px">Descarga → Arrastra a netlify.com/drop → ¡Listo!</div>
+        </div>
       </div>
       <!-- PRODUCTOS TAB -->
       <div class="adm-view" id="t-prods">
@@ -854,7 +889,7 @@ const imgH=imgSrc?`<img src="${imgSrc}" alt="${p.flavor}" loading="lazy" style="
 const tagH=p.tag?`<span class="pc-tag ${tagCls(p.tag)}">${p.tag}</span>`:'';
 const priceH=p.price?`<div class="pc-price">S/ ${p.price}</div>`:`<div class="pc-noprice">Consultar precio</div>`;
 return`<div class="pc" style="animation-delay:${i*.025}s" onclick="openMod('${p.id}')">
-<div class="pc-img" style="background:linear-gradient(135deg,${g[0]},${g[1]})">
+<div class="pc-img" style="background:#f8f9ff">
   <span class="pc-model">${p.model}</span>${tagH}${imgH}
 </div>
 <div class="pc-body">
@@ -873,10 +908,10 @@ function scrollToCat(){document.getElementById('catalog-section').scrollIntoView
 
 function openMod(id){const p=getP(id);if(!p)return;
 const g=fGrad(p.flavor);const icon=fIcon(p.flavor);
-const mi=document.getElementById('mod-img');mi.style.background=`linear-gradient(135deg,${g[0]},${g[1]})`;
+const mi=document.getElementById('mod-img');mi.style.background='#f8f9ff';
 const me=document.getElementById('mod-emoji');
 const imgSrc=p.customImg||(PRODUCT_IMAGES[id]?'data:image/jpeg;base64,'+PRODUCT_IMAGES[id]:null);
-me.innerHTML=imgSrc?`<img src="${imgSrc}" alt="${p.flavor}" style="max-height:175px;max-width:88%;object-fit:contain">`:`${icon}`;
+me.innerHTML=imgSrc?`<img src="${imgSrc}" alt="${p.flavor}" style="max-height:175px;max-width:88%;object-fit:contain;filter:drop-shadow(0 6px 20px rgba(0,0,0,.22))">`:`${icon}`;
 document.getElementById('mod-brand').textContent=p.brand+' · '+p.model;
 document.getElementById('mod-name').textContent=p.flavor;
 document.getElementById('mod-flv').textContent=p.flavorEs;
@@ -924,7 +959,7 @@ const waLink='https://wa.me/'+c.wa+'?text=Hola%20VAPECIXH%2C%20quiero%20consulta
 ['hwa','fltwa'].forEach(id=>{const el=document.getElementById(id);if(el)el.href=waLink;});
 document.getElementById('fwa').href='https://wa.me/'+c.wa;document.getElementById('fig').href=c.ig;document.getElementById('fltig').href=c.ig;}
 
-window.addEventListener('DOMContentLoaded',()=>{if(sessionStorage.getItem('age_ok')==='1')document.getElementById('gate').classList.add('hidden');applyConfig();renderProds(allProds());updBadge();});
+window.addEventListener('DOMContentLoaded',async()=>{if(sessionStorage.getItem('age_ok')==='1')document.getElementById('gate').classList.add('hidden');await loadFromCloud();applyConfig();renderProds(allProds());updBadge();});
 function enterSite(){sessionStorage.setItem('age_ok','1');document.getElementById('gate').classList.add('hidden');}
 function exitSite(){window.location.href='about:blank';}
 
@@ -937,18 +972,137 @@ function pNext(el,nid){if(el.value.length===1){const n=document.getElementById(n
 function pAuto(){if(['p1','p2','p3','p4'].every(id=>document.getElementById(id).value.length===1))doLogin();}
 function doLogin(){const cfg=getCfg();const pin=['p1','p2','p3','p4'].map(id=>document.getElementById(id).value).join('');if(pin===cfg.pin){adminOk=true;showPanel();}else document.getElementById('perr').style.display='block';}
 function showTab(tid,btn){document.querySelectorAll('.adm-view').forEach(v=>v.classList.remove('show'));document.querySelectorAll('.adm-tab').forEach(t=>t.classList.remove('act'));document.getElementById(tid).classList.add('show');if(btn)btn.classList.add('act');if(tid==='t-prods'){showPL();renderPL();}if(tid==='t-precios')renderQPL();}
-function loadCfgForm(){const c=getCfg();document.getElementById('cwa').value=c.wa||'';document.getElementById('cyape').value=c.yape||'';document.getElementById('cplin').value=c.plin||'';document.getElementById('cig').value=c.ig||'';document.getElementById('ccity').value=c.city||'';document.getElementById('cship').value=c.ship||'';document.getElementById('cpin').value='';}
-function saveCfg(){const c=getCfg();const np=document.getElementById('cpin').value.trim();const u={wa:document.getElementById('cwa').value.trim()||c.wa,yape:document.getElementById('cyape').value.trim()||c.yape,plin:document.getElementById('cplin').value.trim()||c.plin,ig:document.getElementById('cig').value.trim()||c.ig,city:document.getElementById('ccity').value.trim()||c.city,ship:document.getElementById('cship').value.trim()||c.ship,pin:np.length===4?np:c.pin};setSCfg(u);applyConfig();const ok=document.getElementById('cfg-ok');ok.classList.add('show');setTimeout(()=>ok.classList.remove('show'),3000);showToast('✅ Configuración guardada');}
+function loadCfgForm(){const c=getCfg();document.getElementById('cwa').value=c.wa||'';document.getElementById('cyape').value=c.yape||'';document.getElementById('cplin').value=c.plin||'';document.getElementById('cig').value=c.ig||'';document.getElementById('ccity').value=c.city||'';document.getElementById('cship').value=c.ship||'';document.getElementById('cpin').value='';const cl=getCloudKeys();document.getElementById('cbin').value=cl.binId||'';document.getElementById('cmkey').value=cl.mkey||'';}
+function saveCfg(){const c=getCfg();const np=document.getElementById('cpin').value.trim();const u={wa:document.getElementById('cwa').value.trim()||c.wa,yape:document.getElementById('cyape').value.trim()||c.yape,plin:document.getElementById('cplin').value.trim()||c.plin,ig:document.getElementById('cig').value.trim()||c.ig,city:document.getElementById('ccity').value.trim()||c.city,ship:document.getElementById('cship').value.trim()||c.ship,pin:np.length===4?np:c.pin};setSCfg(u);const binId=document.getElementById('cbin').value.trim();const mkey=document.getElementById('cmkey').value.trim();if(binId)setCloudKeys({binId,mkey});applyConfig();const ok=document.getElementById('cfg-ok');ok.classList.add('show');setTimeout(()=>ok.classList.remove('show'),3000);showToast('✅ Configuración guardada');}
 function showPL(){document.getElementById('pl-view').style.display='block';document.getElementById('pe-view').style.display='none';}
 function renderPL(){const q=(document.getElementById('as')?.value||'').toLowerCase();const all=[...BP,...getCustom()].map(p=>getP(p.id));const list=all.filter(p=>!q||(p.flavor+p.model+p.brand).toLowerCase().includes(q));document.getElementById('pl').innerHTML=list.map(p=>{const imgSrc=p.customImg||(PRODUCT_IMAGES[p.id]?'data:image/jpeg;base64,'+PRODUCT_IMAGES[p.id]:null);const imgH=imgSrc?`<img class="pi-img" src="${imgSrc}" alt="">`:`<div class="pi-img" style="display:flex;align-items:center;justify-content:center;font-size:24px">${fIcon(p.flavor)}</div>`;const isC=!!getCustom().find(x=>x.id===p.id);return`<div class="prod-item" onclick="openEditProd('${p.id}')">${imgH}<div class="pi-info"><div class="pi-name">${p.model} — ${p.flavor}</div><div class="pi-meta">${p.brand} · ${p.type}${getOv(p.id)?' · ✏️':''}${isC?' · ⭐ Nuevo':''} · ${p.inStock?'✅ Stock':'❌ Agotado'}</div></div><div class="pi-price">${p.price?'S/ '+p.price:'—'}</div></div>`}).join('')||'<p style="color:var(--tx3);text-align:center;padding:20px">Sin resultados</p>';}
 function openNewProd(){isNew=true;editId='cus_'+Date.now();document.getElementById('pl-view').style.display='none';document.getElementById('pe-view').style.display='block';document.getElementById('ep-brand').textContent='Nuevo';document.getElementById('ep-name').textContent='Producto';document.getElementById('ep-model').textContent='';document.getElementById('ep-img').src='';document.getElementById('ep-img').style.display='none';['ef-brand','ef-model','ef-flav','ef-flaves','ef-desc','ef-price','ef-pricew','ef-puffs','ef-nic','ef-ml','ef-url'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});document.getElementById('ef-type').value='descartable';document.getElementById('ef-tag').value='';document.getElementById('ef-stock').value='1';document.getElementById('ef-prev').classList.remove('show');document.getElementById('ef-del').style.display='none';document.getElementById('prod-ok').classList.remove('show');}
 function openEditProd(id){isNew=false;editId=id;const p=getP(id);if(!p)return;document.getElementById('pl-view').style.display='none';document.getElementById('pe-view').style.display='block';document.getElementById('ep-brand').textContent=p.brand;document.getElementById('ep-name').textContent=p.flavor;document.getElementById('ep-model').textContent=p.model;const imgSrc=p.customImg||(PRODUCT_IMAGES[id]?'data:image/jpeg;base64,'+PRODUCT_IMAGES[id]:null);const epi=document.getElementById('ep-img');if(imgSrc){epi.src=imgSrc;epi.style.display='block';}else epi.style.display='none';document.getElementById('ef-brand').value=p.brand||'';document.getElementById('ef-model').value=p.model||'';document.getElementById('ef-flav').value=p.flavor||'';document.getElementById('ef-flaves').value=p.flavorEs||'';document.getElementById('ef-desc').value=p.description||'';document.getElementById('ef-price').value=p.price||'';document.getElementById('ef-pricew').value=p.priceWholesale||'';document.getElementById('ef-puffs').value=p.puffs||'';document.getElementById('ef-nic').value=p.nic||'';document.getElementById('ef-ml').value=p.mL||'';document.getElementById('ef-type').value=p.type||'descartable';document.getElementById('ef-tag').value=p.tag||'';document.getElementById('ef-stock').value=p.inStock?'1':'0';document.getElementById('ef-url').value='';document.getElementById('ef-file').value='';document.getElementById('ef-prev').classList.remove('show');document.getElementById('ef-del').style.display=getCustom().find(x=>x.id===id)?'block':'none';document.getElementById('prod-ok').classList.remove('show');}
 function prevImg(input){const f=input.files[0];if(!f)return;const r=new FileReader();r.onload=e=>{const p=document.getElementById('ef-prev');p.src=e.target.result;p.classList.add('show');};r.readAsDataURL(f);}
-function saveProd(){if(!editId)return;const price=parseFloat(document.getElementById('ef-price').value)||null;const priceW=parseFloat(document.getElementById('ef-pricew').value)||null;const flavor=document.getElementById('ef-flav').value.trim();const flavorEs=document.getElementById('ef-flaves').value.trim();const brand=document.getElementById('ef-brand').value.trim();const model=document.getElementById('ef-model').value.trim();const desc=document.getElementById('ef-desc').value.trim()||null;const type=document.getElementById('ef-type').value;const tag=document.getElementById('ef-tag').value||null;const inStock=document.getElementById('ef-stock').value==='1';const puffs=parseInt(document.getElementById('ef-puffs').value)||null;const nic=document.getElementById('ef-nic').value.trim()||null;const mL=document.getElementById('ef-ml').value.trim()||null;const imgUrl=document.getElementById('ef-url').value.trim()||null;const fi=document.getElementById('ef-file');const doSave=(cImg)=>{if(isNew){const np={id:editId,brand,model,type,flavor,flavorEs,puffs,nic,mL,tag,inStock,price,priceWholesale:priceW,description:desc,customImg:cImg||imgUrl||null};const c=getCustom();c.push(np);saveCustom(c);}else setOv(editId,{brand,model,flavor,flavorEs,description:desc,price,priceWholesale:priceW,tag,inStock,type,puffs,nic,mL,customImg:cImg||imgUrl||null});document.getElementById('prod-ok').classList.add('show');renderProds(allProds());showToast('✅ Producto guardado');setTimeout(()=>{showPL();renderPL();},1800);};if(fi.files[0]){const r=new FileReader();r.onload=e=>doSave(e.target.result);r.readAsDataURL(fi.files[0]);}else doSave(null);}
+function saveProd(){if(!editId)return;const price=parseFloat(document.getElementById('ef-price').value)||null;const priceW=parseFloat(document.getElementById('ef-pricew').value)||null;const flavor=document.getElementById('ef-flav').value.trim();const flavorEs=document.getElementById('ef-flaves').value.trim();const brand=document.getElementById('ef-brand').value.trim();const model=document.getElementById('ef-model').value.trim();const desc=document.getElementById('ef-desc').value.trim()||null;const type=document.getElementById('ef-type').value;const tag=document.getElementById('ef-tag').value||null;const inStock=document.getElementById('ef-stock').value==='1';const puffs=parseInt(document.getElementById('ef-puffs').value)||null;const nic=document.getElementById('ef-nic').value.trim()||null;const mL=document.getElementById('ef-ml').value.trim()||null;const imgUrl=document.getElementById('ef-url').value.trim()||null;const fi=document.getElementById('ef-file');const doSave=(cImg)=>{if(isNew){const np={id:editId,brand,model,type,flavor,flavorEs,puffs,nic,mL,tag,inStock,price,priceWholesale:priceW,description:desc,customImg:cImg||imgUrl||null};const c=getCustom();c.push(np);saveCustom(c);}else setOv(editId,{brand,model,flavor,flavorEs,description:desc,price,priceWholesale:priceW,tag,inStock,type,puffs,nic,mL,customImg:cImg||imgUrl||null});document.getElementById('prod-ok').classList.add('show');renderProds(allProds());showToast('✅ Producto guardado');pushToCloud();setTimeout(()=>{showPL();renderPL();},1800);};if(fi.files[0]){const r=new FileReader();r.onload=e=>doSave(e.target.result);r.readAsDataURL(fi.files[0]);}else doSave(null);}
 function resetProd(){if(!editId||isNew)return;if(!confirm('¿Restaurar valores originales?'))return;delOv(editId);renderProds(allProds());showToast('↩️ Restaurado');setTimeout(()=>{showPL();renderPL();},800);}
 function delProd(){if(!editId)return;if(!confirm('¿Eliminar este producto?'))return;const c=getCustom().filter(p=>p.id!==editId);saveCustom(c);delOv(editId);renderProds(allProds());showToast('🗑️ Eliminado');setTimeout(()=>{showPL();renderPL();},800);}
 function renderQPL(){const all=[...BP,...getCustom()].map(p=>getP(p.id));document.getElementById('qpl').innerHTML=all.map(p=>{const imgSrc=p.customImg||(PRODUCT_IMAGES[p.id]?'data:image/jpeg;base64,'+PRODUCT_IMAGES[p.id]:null);const imgH=imgSrc?`<img class="qp-img" src="${imgSrc}" alt="">`:`<div class="qp-img" style="display:flex;align-items:center;justify-content:center;font-size:20px">${fIcon(p.flavor)}</div>`;return`<div class="qp-item">${imgH}<div class="qp-info"><div class="qp-name">${p.flavor}</div><div class="qp-model">${p.brand} · ${p.model}</div></div><input class="qp-pi" type="number" min="0" step="0.5" placeholder="—" value="${p.price||''}" data-id="${p.id}" inputmode="decimal"></div>`;}).join('');}
-function saveAllPrices(){document.querySelectorAll('.qp-pi').forEach(input=>{const id=input.dataset.id;const val=parseFloat(input.value)||null;const ov=getOv(id)||{};ov.price=val;setOv(id,ov);});renderProds(allProds());const ok=document.getElementById('qp-ok');ok.classList.add('show');setTimeout(()=>ok.classList.remove('show'),3000);showToast('✅ Precios actualizados');}
+function saveAllPrices(){document.querySelectorAll('.qp-pi').forEach(input=>{const id=input.dataset.id;const val=parseFloat(input.value)||null;const ov=getOv(id)||{};ov.price=val;setOv(id,ov);});renderProds(allProds());pushToCloud();const ok=document.getElementById('qp-ok');ok.classList.add('show');setTimeout(()=>ok.classList.remove('show'),3000);showToast('✅ Precios actualizados');}
+
+
+/* ═══ CLOUD SYNC (JSONBin.io) ═══ */
+function getCloudKeys(){return JSON.parse(localStorage.getItem('vx_cloud')||'{"binId":"","mkey":""}')}
+function setCloudKeys(d){localStorage.setItem('vx_cloud',JSON.stringify(d))}
+
+function buildCloudPayload(){
+  const cfg=getCfg();
+  const overrides={};
+  Object.keys(localStorage).forEach(k=>{
+    if(k.startsWith('vx_ov_'))overrides[k.replace('vx_ov_','')]=JSON.parse(localStorage.getItem(k));
+  });
+  const custom=getCustom();
+  return{cfg,overrides,custom,ts:Date.now()};
+}
+
+function applyCloudData(record){
+  if(!record)return;
+  if(record.cfg)localStorage.setItem('vx_cfg',JSON.stringify(record.cfg));
+  if(record.overrides){
+    Object.entries(record.overrides).forEach(([id,ov])=>{
+      localStorage.setItem('vx_ov_'+id,JSON.stringify(ov));
+    });
+  }
+  if(record.custom)localStorage.setItem('vx_custom',JSON.stringify(record.custom));
+}
+
+async function loadFromCloud(){
+  const {binId}=getCloudKeys();
+  if(!binId)return;
+  try{
+    const res=await fetch(`https://api.jsonbin.io/v3/b/${binId}/latest`,{
+      headers:{'X-Bin-Meta':'false'}
+    });
+    if(!res.ok)return;
+    const data=await res.json();
+    applyCloudData(data.record||data);
+    applyConfig();
+    renderProds(allProds());
+    updBadge();
+  }catch(e){console.log('Cloud offline, usando datos locales');}
+}
+
+async function pushToCloud(){
+  const {binId,mkey}=getCloudKeys();
+  if(!binId||!mkey){showToast('⚠️ Configura Bin ID y Master Key',true);return;}
+  try{
+    const payload=buildCloudPayload();
+    const res=await fetch(`https://api.jsonbin.io/v3/b/${binId}`,{
+      method:'PUT',
+      headers:{'Content-Type':'application/json','X-Master-Key':mkey,'X-Bin-Versioning':'false'},
+      body:JSON.stringify(payload)
+    });
+    if(res.ok){
+      const ok=document.getElementById('cloud-ok');ok.classList.add('show');
+      setTimeout(()=>ok.classList.remove('show'),4000);
+      showToast('☁️ Publicado para todos los clientes');
+    }else{throw new Error('HTTP '+res.status);}
+  }catch(e){
+    const er=document.getElementById('cloud-err');er.classList.add('show');
+    setTimeout(()=>er.classList.remove('show'),4000);
+    showToast('❌ Error al publicar',true);
+    console.error(e);
+  }
+}
+
+async function testCloud(){
+  const {binId}=getCloudKeys();
+  if(!binId){showToast('⚠️ Ingresa el Bin ID primero',true);return;}
+  try{
+    const res=await fetch(`https://api.jsonbin.io/v3/b/${binId}/latest`,{headers:{'X-Bin-Meta':'false'}});
+    if(res.ok){showToast('✅ Conexión exitosa con JSONBin');}
+    else showToast('❌ Bin ID incorrecto o privado',true);
+  }catch(e){showToast('❌ Sin conexión a internet',true);}
+}
+
+/* ═══ EXPORT FUNCTION ═══ */
+async function exportarHTML(){
+  showToast('⏳ Generando archivo...');
+  try{
+    const cfg=getCfg();
+    const overrides={};
+    Object.keys(localStorage).forEach(k=>{
+      if(k.startsWith('vx_ov_'))overrides[k]= localStorage.getItem(k);
+    });
+    const custom=localStorage.getItem('vx_custom')||'[]';
+    
+    // Build init script that pre-loads all settings for visitors
+    let initLines=['(function(){'];
+    initLines.push(`localStorage.setItem('vx_cfg','${JSON.stringify(cfg).replace(/'/g,"\\'")}');`);
+    Object.entries(overrides).forEach(([k,v])=>{
+      initLines.push(`localStorage.setItem('${k}','${v.replace(/'/g,"\\'")}');`);
+    });
+    initLines.push(`localStorage.setItem('vx_custom','${custom.replace(/'/g,"\\'")}');`);
+    initLines.push('})();');
+    const initScript='<script id="vx-init">'+initLines.join('')+'<\/script>';
+    
+    // Fetch the current page HTML
+    const res=await fetch(window.location.href);
+    let pageHtml=await res.text();
+    
+    // Remove old init script if exists, inject new one
+    pageHtml=pageHtml.replace(/<script id="vx-init">[\s\S]*?<\/script>/,'');
+    pageHtml=pageHtml.replace('</head>',initScript+'</head>');
+    
+    // Download
+    const blob=new Blob([pageHtml],{type:'text/html;charset=utf-8'});
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement('a');
+    a.href=url;a.download='VAPECIXH.html';
+    document.body.appendChild(a);a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    showToast('✅ ¡Descargado! Sube a Netlify');
+  }catch(e){
+    showToast('⚠️ Abre desde Netlify para exportar',true);
+    console.error(e);
+  }
+}
 
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeMod();if(document.getElementById('cart').classList.contains('show'))toggleCart();if(document.getElementById('adm-ov').classList.contains('show'))closeAdmin();}});
 </script></body></html>
